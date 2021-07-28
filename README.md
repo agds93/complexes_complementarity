@@ -1,5 +1,5 @@
 # Complementarità di un complesso proteico nella regione di legame  
-Di seguito riporto la procedura per trovare la zona di contatto in un complesso di due proteine e stimare il grado di similarità tra loro.  
+Di seguito riporto la procedura per trovare la zona di contatto in un complesso di due proteine e stimare il loro grado di similarità.  
 Il `testo` scritto in questa maniera rappresenta le variabili del codice usato, visibile in appendice.  
 
 ## Appendice
@@ -25,3 +25,25 @@ import ZernikeFunc as ZF
 import SurfaceFunc as SF
 ```
 scritte da <a href="https://scholar.google.it/citations?user=hjkTN0YAAAAJ&hl=it" target="_blank">Mattia Miotto</a>.
+### Caricare le superfici
+Per caricare i punti della superficie della proteina A ed inizializzare l'oggetto classe `Surface`
+```python
+surf_name_a = "./data/3B0F_A_min.dms"
+surf_a_ = pd.read_csv(surf_name_a)
+l_a = len(surf_a_["x"])
+print("Npoints Protein A =", l_a)
+surf_a = np.zeros((l_a, 6))
+surf_a[:,:] = surf_a_[["x", "y", "z", "Nx", "Ny", "Nz"]]
+surf_a_obj = SF.Surface(surf_a[:,:], patch_num = 0, r0 = Rs, theta_max = 45)
+```
+Per caricare i punti della superficie della proteina B ed inizializzare l'oggetto classe `Surface`
+```python
+surf_name_b = "./data/3B0F_B_min.dms"
+surf_b_ = pd.read_csv(surf_name_b) 
+l_b = len(surf_b_["x"])
+print("Npoints Protein B =", l_b)
+surf_b = np.zeros((l_b, 6))
+surf_b[:,:] = surf_b_[["x", "y", "z", "Nx", "Ny", "Nz"]]
+surf_b_obj = SF.Surface(surf_b[:,:], patch_num = 0, r0 = Rs, theta_max = 45)
+```
+### Ricerca zona di contatto
