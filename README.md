@@ -1,6 +1,15 @@
+**Autore**: Alessandro Giudice    
+**Collaboratore**: Samuel Santhosh Gomez  
+
 # Complementarità di un complesso proteico nella regione di legame  
-Di seguito riporto la procedura per trovare la zona di contatto in un complesso di due proteine e stimare il loro grado di similarità.  
+Di seguito riporto la procedura per trovare la zona di contatto in un complesso di due proteine e stimare la loro similarità.  
 Il `testo` scritto in questa maniera rappresenta le variabili del codice usato, visibile in appendice.  
+
+## Ricerca della regione di legame
+L'intera superficie del complesso proteico studiato è visibile in Figura 0.
+<p align="center"><img src="img/two_proteins_01.png" width=700px></p>
+<p align="center"><img src="img/two_proteins_02.png" width=700px></p>
+<p align="center"><i>Figura 0</i>: Proteina A (blu) e proteina B (rosso) da due punti di vista.</p>
 
 ## Appendice
 ### Librerie e moduli
