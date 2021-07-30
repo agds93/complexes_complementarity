@@ -11,6 +11,14 @@ L'intera superficie del complesso proteico studiato è visibile in Figura 0.
 <p align="center"><img src="img/two_proteins_02.png" width=700px></p>
 <p align="center"><i>Figura 0</i>: Proteina A (blu) e proteina B (rosso) da due punti di vista.</p>
 
+<p align="center"><img src="img/ProteinA_Point6351.png" width=700px></p>
+<p align="center"><img src="img/ProteinA_Point6351_processed.png" width=700px></p>
+<p align="center"><i>Figura 1</i>: Media originale (in alto) e processata (in basso) di una patch della superficie A.</p>
+
+<p align="center"><img src="img/ProteinB_Point6026.png" width=700px></p>
+<p align="center"><img src="img/ProteinB_Point6026_processed.png" width=700px></p>
+<p align="center"><i>Figura 2</i>: Media originale (in alto) e processata (in basso) di una patch della superficie B.</p>
+
 ## Appendice
 ### Librerie e moduli
 Il codice scritto è stato eseguito con <a href="https://jupyterlab.readthedocs.io/en/stable/" target="_blank">JupyterLab</a> utilizzando `python 3.8`.  
@@ -34,8 +42,21 @@ import ZernikeFunc as ZF
 import SurfaceFunc as SF
 ```
 scritte da <a href="https://scholar.google.it/citations?user=hjkTN0YAAAAJ&hl=it" target="_blank">Mattia Miotto</a>.
+### Parametri
+I valori dei parametri usati per selezionare e fittare una patch sono
+```python
+Npixel = 25    # il lato del piano in pixel
+Dpp = 0.5      # la distanza tra i punti della stessa patch
+Rs = 6         # il raggio della sfera che include la patch
+threshold = 5  # valore soglia per stabilire se la varianza è alta
+ZOrder = 20    # ordine dell'espansione di Zernike
+Daa = 3        # distanza di soglia per trovare punti di contatto tra le superfici
+```
+I valori sono in ångström, tranne `Npixel` e `ZOrder`.
 ### Caricare le superfici
-Per caricare i punti della superficie della proteina A ed inizializzare l'oggetto di classe `Surface` si usa
+Per caricare i punti della superficie della proteina A (disponibile 
+<a href="data/3B0F_A_min.dms" target="_blank">qui</a>
+) ed inizializzare l'oggetto di classe `Surface` si usa
 ```python
 surf_name_a = "./data/3B0F_A_min.dms"
 surf_a_ = pd.read_csv(surf_name_a)
@@ -45,7 +66,9 @@ surf_a = np.zeros((l_a, 6))
 surf_a[:,:] = surf_a_[["x", "y", "z", "Nx", "Ny", "Nz"]]
 surf_a_obj = SF.Surface(surf_a[:,:], patch_num = 0, r0 = Rs, theta_max = 45)
 ```
-Per caricare i punti della superficie della proteina B ed inizializzare l'oggetto di classe `Surface` si usa
+Per caricare i punti della superficie della proteina B (disponibile 
+<a href="data/3B0F_B_min.dms" target="_blank">qui</a>
+) ed inizializzare l'oggetto di classe `Surface` si usa
 ```python
 surf_name_b = "./data/3B0F_B_min.dms"
 surf_b_ = pd.read_csv(surf_name_b) 
@@ -101,8 +124,8 @@ center_a, patch_prot_a, center_b, patch_prot_b = GroupNearPoints(Daa, surf_a_obj
 ```
 Però gli indici dei punti `center_a` e `center_b` dalla funzione `GroupNearPoints` sono riferiti alle zone di contatto `patch_prot_a` e `patch_prot_b`. Per ottenere gli indici rispetto alle superfici intere si utilizza
 ```python
-center_a_true = MU.PointNearPoint(surf_a[:,:3], patch_prot_a[center_a])
-center_b_true = MU.PointNearPoint(surf_b[:,:3], patch_prot_b[center_b])
+center_a_true = PointNearPoint(surf_a[:,:3], patch_prot_a[center_a])
+center_b_true = PointNearPoint(surf_b[:,:3], patch_prot_b[center_b])
 center_a = center_a_true
 center_b = center_b_true
 ```
