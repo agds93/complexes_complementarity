@@ -13,9 +13,8 @@ L'intera superficie del complesso proteico studiato è visibile in Figura 0.
 <p align="center"><img src="img/two_proteins_01.png" width=700px></p>
 <p align="center"><img src="img/two_proteins_02.png" width=700px></p>
 <p align="center"><i>Figura 0</i>: Proteina A (blu) e proteina B (rosso) da due punti di vista.</p>
-Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al centro di massa della zona di contatto, rispettivamente sulla superficie A e sulla superficie B. I grafici in Figura 1 rappresentano la media della patch con centro `center_a` ottenuta con i due metodi (vedi 
-<a href="https://github.com/agds93/percentage_non_functionality/" target="_blank">qui</a>
-o l'appendice), dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels vengono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.  
+Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al centro di massa della zona di contatto, rispettivamente sulla superficie A e sulla superficie B.  
+I grafici in Figura 1 rappresentano la media della patch con centro `center_a` ottenuta con due metodi, dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels vengono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.  
 <p align="center"><img src="img/ProteinA_Point6351.png" width=700px></p>
 <p align="center"><img src="img/ProteinA_Point6351_processed.png" width=700px></p>
 <p align="center"><i>Figura 1</i>: Media originale (in alto) e processata (in basso) di una patch della superficie A.</p>
