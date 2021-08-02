@@ -4,20 +4,28 @@
 # Complementarità di un complesso proteico nella regione di legame  
 Di seguito riporto la procedura per trovare la zona di contatto in un complesso di due proteine e stimare la loro similarità.  
 Il `testo` scritto in questa maniera rappresenta le variabili del codice usato, visibile in appendice.  
+I metodi per la selezione delle patch, il calcolo della media e della varianza per ogni pixel in disco unitario con due metodi sono visibili
+<a href="https://github.com/agds93/percentage_non_functionality/" target="_blank">qui</a>
+.  
 
 ## Ricerca della regione di legame
 L'intera superficie del complesso proteico studiato è visibile in Figura 0.
 <p align="center"><img src="img/two_proteins_01.png" width=700px></p>
 <p align="center"><img src="img/two_proteins_02.png" width=700px></p>
 <p align="center"><i>Figura 0</i>: Proteina A (blu) e proteina B (rosso) da due punti di vista.</p>
-
+Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al centro di massa della zona di contatto, rispettivamente sulla superficie A e sulla superficie B. I grafici in Figura 1 rappresentano la media della patch con centro `center_a` ottenuta con i due metodi (vedi 
+<a href="https://github.com/agds93/percentage_non_functionality/" target="_blank">qui</a>
+o l'appendice), dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels vengono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.  
 <p align="center"><img src="img/ProteinA_Point6351.png" width=700px></p>
 <p align="center"><img src="img/ProteinA_Point6351_processed.png" width=700px></p>
 <p align="center"><i>Figura 1</i>: Media originale (in alto) e processata (in basso) di una patch della superficie A.</p>
-
+Le stesse cose sono rappresentate nella Figura 2 ma riferite alla patch con con centro `center_b`.
 <p align="center"><img src="img/ProteinB_Point6026.png" width=700px></p>
 <p align="center"><img src="img/ProteinB_Point6026_processed.png" width=700px></p>
 <p align="center"><i>Figura 2</i>: Media originale (in alto) e processata (in basso) di una patch della superficie B.</p>
+
+## Complementarietà  
+Date due patch come in Figura 1 e Figura 2 per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, il modulo `c_inv_diff` della distanza tra i coefficienti dell'espansione di Zernike tra la patch della supeficie A e la patch della superficie B. 
 
 ## Appendice
 ### Librerie e moduli
@@ -79,9 +87,6 @@ surf_b[:,:] = surf_b_[["x", "y", "z", "Nx", "Ny", "Nz"]]
 surf_b_obj = SF.Surface(surf_b[:,:], patch_num = 0, r0 = Rs, theta_max = 45)
 ```
 ### Utilità
-Le funzioni riguardo la selezione delle patch e il calcolo della media sul piano di fit con i due metodi sono visibili
-<a href="https://github.com/agds93/percentage_non_functionality/" target="_blank">qui</a>
-.  
 Dato un insieme di punti `points` e un altro punto `P`, la seguente funzione restituisce l'elemento di `points` più vicino a `P`.
 ```python
 def PointNearPoint(points, P) :
