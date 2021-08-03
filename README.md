@@ -32,7 +32,8 @@ Le stesse cose sono rappresentate nella Figura 2 ma riferite alla patch con cent
 <p align="center"><i>Figura 2</i>: Media originale (in alto) e processata (in basso) di una patch della superficie B.</p>
 
 ## Complementarietà  
-Date due patch dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B), per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch. Tali piani processati sono i grafici nella parte bassa della Figura 1-2. Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza la differenza tra
+Date due patch dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B), per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch. Tali piani processati sono i grafici nella parte bassa della Figura 1-2.  
+Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza il valore di `c_inv_diff` tra le due liste di coefficienti di Zernike è circa pari a uno.
 
 ## Appendice
 ### Librerie e moduli
