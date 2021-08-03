@@ -4,7 +4,7 @@
 # Complementarità nella regione di legame di un complesso proteico
 Di seguito riporto la procedura per trovare la zona di contatto in un complesso di due proteine e stimare la loro similarità.  
 Il `testo` scritto in questa maniera rappresenta le variabili del codice usato, visibile in appendice.  
-I metodi per la selezione delle patch, il calcolo della media e della varianza per ogni pixel in disco unitario con due metodi sono visibili
+I metodi per la selezione delle patch, il calcolo della media e della varianza per ogni pixel in disco unitario con due metodi sono riportati
 <a href="https://github.com/agds93/percentage_non_functionality/" target="_blank">qui</a>
 .  
 
@@ -33,7 +33,7 @@ Le stesse cose sono rappresentate nella Figura 2 ma riferite alla patch con cent
 
 ## Complementarietà  
 Date due patch dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B), per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch. Tali piani processati sono i grafici nella parte bassa della Figura 1-2.  
-Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza il valore di `c_inv_diff` tra le due liste di coefficienti di Zernike è circa pari a uno.
+Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno la maggiore similarità tra tutte le possibili altre nella zona di contatto, quindi il valore di `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è circa pari a uno.
 
 ## Appendice
 ### Librerie e moduli
@@ -50,7 +50,7 @@ import pandas as pd
 ```python
 from mayavi import mlab
 ```
-Il modulo `mayavi`, in particolare `mlab`, è necessario per visualizzare le superfici 3D in una finestra Qt.  
+Il modulo `mayavi`, in particolare `mlab`, è necessario per visualizzare le superfici 3D in una finestra Qt, così da produrre la Figura 0.  
 Mentre le librerie di base sono
 ```python
 sys.path.append("./bin/")
@@ -180,7 +180,17 @@ def ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_1, surf_b_obj, plane_2) :
     return c_inv_diff
 ```
 ### Grafici
-La seguente funzione grafica la media di una patch prodotta con due diversi metodi: `CreatePlane_Weigths` e `CreatePlane_Projections`.
+La seguente funzione grafica la media di una patch prodotta con due diversi metodi: `CreatePlane_Weigths` e `CreatePlane_Projections`. Tale funzione produce i grafici in Figura 1-2. Gli input sono:
+* il nome della proteina da inserire nel titolo.
+* il numero di pixel `Npixel`. 
+* il raggio `Rs` della sfera che include la patch.
+* il piano generato da `CreatePlane_Weigths`.
+* il piano generato da `CreatePlane_Projections`.
+* l'indice `center` scelto come centro della patch.
+* la distanza tra i punti della patch `Dpp`.
+* il valore `Daa` della distanza di soglia.
+* le mappe dei <a href="https://matplotlib.org/stable/tutorials/colors/colormaps.html" target="_blank">colori</a> da utilizzare.
+* il nome del file di output.
 ```python
 def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, color_map, name) :
     
