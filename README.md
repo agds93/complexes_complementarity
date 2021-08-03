@@ -1,7 +1,7 @@
 **Autore**: Alessandro Giudice    
 **Collaboratore**: Samuel Santhosh Gomez  
 
-# Complementarità di un complesso proteico nella regione di legame  
+# Complementarità nella regione di legame di un complesso proteico
 Di seguito riporto la procedura per trovare la zona di contatto in un complesso di due proteine e stimare la loro similarità.  
 Il `testo` scritto in questa maniera rappresenta le variabili del codice usato, visibile in appendice.  
 I metodi per la selezione delle patch, il calcolo della media e della varianza per ogni pixel in disco unitario con due metodi sono visibili
@@ -14,7 +14,11 @@ L'intera superficie del complesso proteico studiato è visibile in Figura 0.
 <p align="center"><img src="img/two_proteins_02.png" width=700px /></p>
 <p align="center"><i>Figura 0</i>: Proteina A (blu) e proteina B (rosso) da due punti di vista.</p>
 
-Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al centro di massa della zona di contatto, rispettivamente sulla superficie A e sulla superficie B.  
+Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. In particolare la funzione restituisce due zone di contatto:
+* `patch_prot_a`, cioè la zona di contatto sulla superficie A (punti blu in Figura 0).
+* `patch_prot_b`, cioè la zona di contatto sulla superficie B (punti rossi in Figura 0).
+
+Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al centro di massa della zona di contatto, rispettivamente sulla superficie A e sulla superficie B.  
 I grafici in Figura 1 rappresentano la media della patch con centro `center_a` ottenuta con due metodi, dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels vengono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.
 
 <p align="center"><img src="img/ProteinA_Point6351.png" width=700px></p>
@@ -28,7 +32,7 @@ Le stesse cose sono rappresentate nella Figura 2 ma riferite alla patch con cent
 <p align="center"><i>Figura 2</i>: Media originale (in alto) e processata (in basso) di una patch della superficie B.</p>
 
 ## Complementarietà  
-Date due patch come in Figura 1 e Figura 2 per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch.
+Date due patch dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B), per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch. Tali piani processati sono i grafici nella parte bassa della Figura 1-2. Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza la differenza tra
 
 ## Appendice
 ### Librerie e moduli
