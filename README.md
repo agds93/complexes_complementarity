@@ -4,7 +4,7 @@
 # Complementarità nella regione di legame di un complesso proteico
 Di seguito riporto la procedura per trovare la zona di contatto in un complesso di due proteine e stimare la loro similarità.  
 Il `testo` scritto in questa maniera rappresenta le variabili del codice usato, visibile in appendice.  
-I metodi per la selezione delle patch, il calcolo della media e della varianza per ogni pixel in disco unitario con due metodi sono riportati
+I metodi per selezionare una patch, calcolare media e varianza per ogni pixel in disco unitario con due metodi, e produrre i rispettivi grafici sono riportati
 <a href="https://github.com/agds93/percentage_non_functionality/" target="_blank">qui</a>
 .  
 
@@ -50,7 +50,7 @@ import pandas as pd
 ```python
 from mayavi import mlab
 ```
-Il modulo `mayavi`, in particolare `mlab`, è necessario per visualizzare le superfici 3D in una finestra Qt, così da produrre la Figura 0.  
+Il modulo `mayavi`, in particolare `mlab`, è necessario per visualizzare le superfici 3D in una finestra Qt.  
 Mentre le librerie di base sono
 ```python
 sys.path.append("./bin/")
@@ -59,7 +59,7 @@ import SurfaceFunc as SF
 ```
 scritte da <a href="https://scholar.google.it/citations?user=hjkTN0YAAAAJ&hl=it" target="_blank">Mattia Miotto</a>.
 ### Parametri
-I valori dei parametri usati per selezionare e fittare una patch sono
+I valori dei parametri usati per selezionare una patch e produrre il piano di fit sono
 ```python
 Npixel = 25    # il lato del piano in pixel
 Dpp = 0.5      # la distanza tra i punti della stessa patch
@@ -112,23 +112,19 @@ Dati due oggetti superficie (`surf_a_obj` e `surf_b_obj`) e una distanza di sogl
 * la matrice dei punti della zona di contatto sulla superficie B.
 ```python
 def GroupNearPoints(Daa, surf_a_obj, surf_b_obj) :
-    
     prot_A = surf_a_obj.surface[:,:3]
     prot_B = surf_b_obj.surface[:,:3]
     print("Research of contact points. This step requires time...")
     patch_prot_a, patch_prot_b = SF.ContactPoints(prot_A, prot_B, Daa)
     print("Research complete.")
-    
     cm_a = np.mean(patch_prot_a[:,:3], axis=0)
     print("CM of protein A group =", cm_a)
     center_a = PointNearPoint(patch_prot_a[:,:3], cm_a)
     print("Patch protein A: Center = {} with coord = {}".format(center_a, patch_prot_a[center_a,:3]))
-    
     cm_b = np.mean(patch_prot_b[:,:3], axis=0)
     print("CM of protein B group =", cm_b)
     center_b = PointNearPoint(patch_prot_b[:,:3], cm_b)
     print("Patch protein B: Center = {} with coord = {}".format(center_b, patch_prot_b[center_b,:3]))
-    
     return center_a, patch_prot_a[:,:3], center_b, patch_prot_b[:,:3]
 ```
 Tale funzione viene utilizzata con
@@ -146,19 +142,16 @@ center_b = center_b_true
 La seguente funzione genera le medie di due patch (una per superficie) con orientazioni opposte per ogni metodo.
 ```python
 def PatchesMethods(Npixel, surf_a_obj, c_a, surf_b_obj, c_b, Dpp) :
-    
     patch_a, _ = surf_a_obj.BuildPatch(point_pos=c_a, Dmin=Dpp)
     rot_patch_a, rot_patch_nv_a = surf_a_obj.PatchReorientNew(patch_a, +1)
     z_pa = surf_a_obj.FindOrigin(rot_patch_a)
     plane_W_a, _, _, _ = CreatePlane_Weigths("mean", patch=rot_patch_a, z_c=z_pa, Np=Npixel)
     plane_P_a, _, _, _ = CreatePlane_Projections("mean", patch=rot_patch_a, z_c=z_pa, Np=Npixel)
-    
     patch_b, _ = surf_b_obj.BuildPatch(point_pos=c_b, Dmin=Dpp)
     rot_patch_b, rot_patch_nv_b = surf_b_obj.PatchReorientNew(patch_b, -1)
     z_pb = surf_b_obj.FindOrigin(rot_patch_b)
     plane_W_b, _, _, _ = CreatePlane_Weigths("mean", patch=rot_patch_b, z_c=z_pb, Np=Npixel)
     plane_P_b, _, _, _ = CreatePlane_Projections("mean", patch=rot_patch_b, z_c=z_pb, Np=Npixel)
-    
     return plane_W_a, plane_P_a, plane_W_b, plane_P_b
 ```
 ### Coefficienti di Zernike
@@ -193,25 +186,17 @@ La seguente funzione grafica la media di una patch prodotta con due diversi meto
 * il nome del file di output.
 ```python
 def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, color_map, name) :
-    
     if obj_name == "" :
         obj_name = "Unknown"
-
     if len(color_map) != 1 :
         color_map = "Greens"
-   
     matrix = [ p_W, p_P ]
-    
     s0 = "Protein = {}, Daa = {}\nPatch of center = {}, distance between points = {}, radius = {}".format(obj_name, Daa, center, Dpp, Rs)
-    
     s1 = "Mean with Weigths Method in function of position\n\n"
     s2 = "Mean with Projections Method in function of position\n\n"
-    
     titles = [ s1, s2 ]
-        
-    fig, ax = mpl.subplots(nrows=1, ncols=2, figsize=(8,4), dpi=200, facecolor="white")  # dpi=200 per compensare rasterized
+    fig, ax = mpl.subplots(nrows=1, ncols=2, figsize=(8,4), dpi=200, facecolor="white")
     fig.suptitle(s0, fontsize="9")
-
     for row in range(1) :
         for col in range(2):
             data = matrix[col]
@@ -222,18 +207,14 @@ def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, colo
             for side in ax[col].spines.keys():  # 'top', 'bottom', 'left', 'right'
                 ax[col].spines[side].set_linewidth(0.30)
                 ax[col].spines[side].set_color("black")
-            im = ax[col].pcolormesh(data, cmap=color_map, rasterized=True)   # senza rasterized il file è troppo grande
-            ### colorbar ###
+            im = ax[col].pcolormesh(data, cmap=color_map, rasterized=True)
             ticks_list = [np.amin(data), np.amax(data)]
             cb = mpl.colorbar(im, ax=ax[col], ticks=ticks_list)
             cb.ax.tick_params(axis="both", width ="0.30", color="black", labelsize="8")
             for side in cb.ax.spines.keys():  # 'top', 'bottom', 'left', 'right'
                 cb.ax.spines[side].set_linewidth(0.30)
                 cb.ax.spines[side].set_color("black")
-            ### colorbar ###
-
     fig.tight_layout()
-    
     if name != "" or name == "default" :
         if name == "default" :
             n = "Mean_Patch{}_Dpp{}".format(center, Dpp)
