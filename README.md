@@ -35,6 +35,12 @@ Le stesse cose sono rappresentate nella Figura 2 ma riferite alla patch con cent
 Date due patch dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B), per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch. Tali piani processati sono i grafici nella parte bassa della Figura 1-2.  
 Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno la maggiore similarità tra tutte le possibili altre nella zona di contatto, quindi il valore di `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è circa pari a uno.
 
+<p align="center"><img src="img/diff_coeff_pointA_zoneB.png" width=700px></p>
+<p align="center"><i>Figura 3</i>: Differenza di ... di dieci punti della zona B rispetto al "punto" della zona A.</p>
+
+<p align="center"><img src="img/diff_coeff_pointB_zoneA.png" width=700px></p>
+<p align="center"><i>Figura 4</i>: Differenza di ... di dieci punti della zona A rispetto al "punto" della zona B.</p>
+
 ## Appendice
 ### Librerie e moduli
 Il codice scritto è stato eseguito con <a href="https://jupyterlab.readthedocs.io/en/stable/" target="_blank">JupyterLab</a> utilizzando `python 3.8`.  
@@ -172,6 +178,60 @@ def ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_1, surf_b_obj, plane_2) :
     c_inv_diff = np.sqrt( sum( (c_inv_1[:]-c_inv_2[:])**2 ) )
     return c_inv_diff
 ```
+### Complementarietà
+La differenza dei moduli dei coefficienti di Zernike rispetto al punto più vicino al centro di massa di ogni zona di contatto, per ogni metodo, è data da 
+```python
+center_1 = center_a
+center_2 = center_b
+
+plane_W_1, plane_P_1, plane_W_2, plane_P_2 = PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
+coeff_diff_W = ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_b_obj, plane_W_2)
+coeff_diff_P = ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_P_1, surf_b_obj, plane_P_2)
+
+print("Protein A: Patch center = {}".format(center_1))
+print("Protein B: Patch center = {}".format(center_2))
+print("Weigths Method: Difference Zernike coefficients = {}".format(coeff_diff_W))
+print("Projections Method: Difference Zernike coefficients = {}".format(coeff_diff_P))
+```
+Si generano dieci indici di punti intorno a `center_a` e `center_b`, cioè
+```python
+center_list = np.arange(5500, 6500, 100)
+```
+Gli indici sono gli stessi per entrambe le zone, però si riferiscono a punti diversi.  
+La differenza degli invarianti tra i punti nella zona B e il punto `center_a` della zona A è data da
+```python
+center_1 = center_a  # only this is fixed
+center_2 = center_b
+plane_W_1, plane_P_1, _, _ = PatchesMethods(Npixel, surf_a_obj, center_a, surf_b_obj, center_b, Dpp)
+coeff_diff_W = np.zeros((len(center_list)))
+coeff_diff_P = np.zeros((len(center_list)))
+for i in range(len(center_list)) :
+    center_2 = center_list[i]
+    _, _, plane_W_2, plane_P_2 = PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
+    coeff_diff_W[i] = ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_b_obj, plane_W_2)
+    coeff_diff_P[i] = ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_P_1, surf_b_obj, plane_P_2)
+
+with open("coeff_dist_A.txt", "w") as file1 :
+    for i in range(len(center_list)) :
+        file1.write("{}\t{}\t{}\t{}\n".format(center_1, center_list[i], coeff_diff_W[i], coeff_diff_P[i]))
+```
+La differenza degli invarianti tra i punti nella zona A e il punto `center_b` della zona B è data da
+```python
+center_1 = center_a
+center_2 = center_b  # only this is fixed
+_, _, plane_W_2, plane_P_2 = MU.PatchesMethods(Npixel, surf_a_obj, center_a, surf_b_obj, center_b, Dpp)
+coeff_diff_W = np.zeros((len(center_list)))
+coeff_diff_P = np.zeros((len(center_list)))
+for i in range(len(center_list)) :
+    center_1 = center_list[i]
+    plane_W_1, plane_P_1, _, _, = MU.PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
+    coeff_diff_W[i] = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_b_obj, plane_W_2)
+    coeff_diff_P[i] = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_P_1, surf_b_obj, plane_P_2)
+    
+with open("coeff_dist_B.txt", "w") as file2 :
+    for i in range(len(center_list)) :
+        file2.write("{}\t{}\t{}\t{}\n".format(center_list[i], center_2, coeff_diff_W[i], coeff_diff_P[i]))
+```
 ### Grafici
 La seguente funzione grafica la media di una patch prodotta con due diversi metodi: `CreatePlane_Weigths` e `CreatePlane_Projections`. Tale funzione produce i grafici in Figura 1-2. Gli input sono:
 * il nome della proteina da inserire nel titolo.
@@ -222,4 +282,46 @@ def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, colo
             n = name
         mpl.savefig("{}.pdf".format(n))
         print("The figure was generated.")
+```
+La Figura 3 è prodotta da
+```python
+points_list = np.loadtxt("./risultati/coeff_dist_A.txt", usecols=1, unpack=True)
+coeff_W = np.loadtxt("./risultati/coeff_dist_A.txt", usecols=2, unpack=True)
+coeff_P = np.loadtxt("./risultati/coeff_dist_A.txt", usecols=3, unpack=True)
+
+fig, ax = mpl.subplots(nrows=1, ncols=1, figsize=(8,4), facecolor="white", dpi=200)
+ax.set_xlabel("Surface point", fontsize="8")
+ax.set_ylabel("Difference of invariants", fontsize="8")
+ax.tick_params(axis="both", width ="0.60", color="black", labelsize="6")
+ax.locator_params(axis="x", nbins=21)
+ax.locator_params(axis="y", nbins=21)
+for side in ax.spines.keys():  # 'top', 'bottom', 'left', 'right'
+    ax.spines[side].set_linewidth(0.60)
+    ax.spines[side].set_color("black")
+ax.plot(points_list, coeff_W, "o", markersize="2", label="Weigths Method", rasterized=True)
+ax.plot(points_list, coeff_P, "o", markersize="2", label="Projections Method", rasterized=True)
+ax.legend(fontsize="7")
+fig.tight_layout()
+mpl.savefig("diff_coeff_pointA_zoneB.pdf")
+```
+La Figura 4 è prodotta da
+```python
+points_list = np.loadtxt("./risultati/coeff_dist_B.txt", usecols=0, unpack=True)
+coeff_W = np.loadtxt("./risultati/coeff_dist_B.txt", usecols=2, unpack=True)
+coeff_P = np.loadtxt("./risultati/coeff_dist_B.txt", usecols=3, unpack=True)
+
+fig, ax = mpl.subplots(nrows=1, ncols=1, figsize=(8,4), facecolor="white", dpi=200)
+ax.set_xlabel("Surface point", fontsize="8")
+ax.set_ylabel("Difference of invariants", fontsize="8")
+ax.tick_params(axis="both", width ="0.60", color="black", labelsize="6")
+ax.locator_params(axis="x", nbins=21)
+ax.locator_params(axis="y", nbins=21)
+for side in ax.spines.keys():  # 'top', 'bottom', 'left', 'right'
+    ax.spines[side].set_linewidth(0.60)
+    ax.spines[side].set_color("black")
+ax.plot(points_list, coeff_W, "o", markersize="2", label="Weigths Method", rasterized=True)
+ax.plot(points_list, coeff_P, "o", markersize="2", label="Projections Method", rasterized=True)
+ax.legend(fontsize="7")
+fig.tight_layout()
+mpl.savefig("diff_coeff_pointB_zoneA.pdf")
 ```
