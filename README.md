@@ -33,13 +33,14 @@ Le stesse cose sono rappresentate nella Figura 2 ma riferite alla patch con cent
 
 ## Complementarietà  
 Date due patch dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B), per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch. Tali piani processati sono i grafici nella parte bassa della Figura 1-2.  
-Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno la maggiore similarità tra tutte le possibili altre nella zona di contatto, quindi il valore di `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è circa pari a uno.
+Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno la maggiore similarità tra tutte le possibili altre nella zona di contatto, quindi il valore di `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è circa pari a uno.  
+In Figura 3 e Figura 4 sono visibili i valori, per ogni metodo, di `c_inv_diff` tra dieci punti appartenenti `patch_prot_b` (`patch_prot_a`) e il punto `center_a` (`center_b`).
 
 <p align="center"><img src="img/diff_coeff_pointA_zoneB.png" width=700px></p>
-<p align="center"><i>Figura 3</i>: Differenza di ... di dieci punti della zona B rispetto al "punto" della zona A.</p>
+<p align="center"><i>Figura 3</i>: Differenza degli invarianti tra dieci punti della zona B e il punto migliore della zona A.</p>
 
 <p align="center"><img src="img/diff_coeff_pointB_zoneA.png" width=700px></p>
-<p align="center"><i>Figura 4</i>: Differenza di ... di dieci punti della zona A rispetto al "punto" della zona B.</p>
+<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra dieci punti della zona A e il punto migliore della zona B.</p>
 
 ## Appendice
 ### Librerie e moduli
@@ -215,6 +216,7 @@ with open("coeff_dist_A.txt", "w") as file1 :
     for i in range(len(center_list)) :
         file1.write("{}\t{}\t{}\t{}\n".format(center_1, center_list[i], coeff_diff_W[i], coeff_diff_P[i]))
 ```
+Il file generato è disponibile <a href="data/coeff_dist_A.txt" target="_blank">qui</a>.  
 La differenza degli invarianti tra i punti nella zona A e il punto `center_b` della zona B è data da
 ```python
 center_1 = center_a
@@ -232,6 +234,7 @@ with open("coeff_dist_B.txt", "w") as file2 :
     for i in range(len(center_list)) :
         file2.write("{}\t{}\t{}\t{}\n".format(center_list[i], center_2, coeff_diff_W[i], coeff_diff_P[i]))
 ```
+Il file generato è disponibile <a href="data/coeff_dist_B.txt" target="_blank">qui</a>.
 ### Grafici
 La seguente funzione grafica la media di una patch prodotta con due diversi metodi: `CreatePlane_Weigths` e `CreatePlane_Projections`. Tale funzione produce i grafici in Figura 1-2. Gli input sono:
 * il nome della proteina da inserire nel titolo.
