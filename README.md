@@ -14,7 +14,7 @@ L'intera superficie del complesso proteico studiato è visibile in Figura 0.
 <p align="center"><img src="img/two_proteins_02.png" width=700px /></p>
 <p align="center"><i>Figura 0</i>: Proteina A (blu) e proteina B (rosso) da due punti di vista.</p>
 
-Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. In particolare la funzione restituisce due zone di contatto:
+Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. Tale funzione restituisce due zone di contatto:
 * `patch_prot_a`, cioè la zona di contatto sulla superficie A (punti blu in Figura 0).
 * `patch_prot_b`, cioè la zona di contatto sulla superficie B (punti rossi in Figura 0).
 
