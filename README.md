@@ -246,7 +246,7 @@ La seguente funzione grafica la media di una patch prodotta con due diversi meto
 * la distanza tra i punti della patch `Dpp`.
 * il valore `Daa` della distanza di soglia.
 * le mappe dei <a href="https://matplotlib.org/stable/tutorials/colors/colormaps.html" target="_blank">colori</a> da utilizzare.
-* il nome del file di output.
+* il nome del file di output con opportuna estensione.
 ```python
 def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, color_map, name) :
     if obj_name == "" :
@@ -254,11 +254,11 @@ def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, colo
     if len(color_map) != 1 :
         color_map = "Greens"
     matrix = [ p_W, p_P ]
-    s0 = "Protein = {}, Daa = {}\nPatch of center = {}, distance between points = {}, radius = {}".format(obj_name, Daa, center, Dpp, Rs)
-    s1 = "Mean with Weigths Method in function of position\n\n"
+    s0 = "Protein {} with threshold distance = {}\nPatch of center = {}, distance between points = {}, radius = {}".format(obj_name, Daa, center, Dpp, Rs)
+    s1 = "Mean with Weights Method in function of position\n\n"
     s2 = "Mean with Projections Method in function of position\n\n"
-    titles = [ s1, s2 ]
-    fig, ax = mpl.subplots(nrows=1, ncols=2, figsize=(8,4), dpi=200, facecolor="white")
+    titles = [ s1, s2 ]  
+    fig, ax = mpl.subplots(nrows=1, ncols=2, figsize=(8,4), dpi=200, facecolor="white")  # dpi=200 per compensare rasterized
     fig.suptitle(s0, fontsize="9")
     for row in range(1) :
         for col in range(2):
@@ -270,7 +270,7 @@ def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, colo
             for side in ax[col].spines.keys():  # 'top', 'bottom', 'left', 'right'
                 ax[col].spines[side].set_linewidth(0.30)
                 ax[col].spines[side].set_color("black")
-            im = ax[col].pcolormesh(data, cmap=color_map, rasterized=True)
+            im = ax[col].pcolormesh(data, cmap=color_map, rasterized=True)   # senza rasterized il file è troppo grande
             ticks_list = [np.amin(data), np.amax(data)]
             cb = mpl.colorbar(im, ax=ax[col], ticks=ticks_list)
             cb.ax.tick_params(axis="both", width ="0.30", color="black", labelsize="8")
@@ -280,10 +280,10 @@ def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, colo
     fig.tight_layout()
     if name != "" or name == "default" :
         if name == "default" :
-            n = "Mean_Patch{}_Dpp{}".format(center, Dpp)
+            n = "Mean_Patch{}.pdf".format(center, Dpp)
         else :
             n = name
-        mpl.savefig("{}.pdf".format(n))
+        mpl.savefig("{}".format(n))
         print("The figure was generated.")
 ```
 La Figura 3 è prodotta da
