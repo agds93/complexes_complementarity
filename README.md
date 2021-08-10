@@ -19,7 +19,7 @@ Per trovare la zona di contatto tra le due superfici si utilizza la funzione `Gr
 * `patch_prot_b`, cioè la zona di contatto sulla superficie B (punti rossi in Figura 0).
 
 Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al centro di massa della zona di contatto, rispettivamente sulla superficie A e sulla superficie B.  
-I grafici in Figura 1 rappresentano la media della patch con centro `center_a` ottenuta con due metodi, dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels vengono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.
+I grafici in Figura 1 rappresentano la media della patch con centro `center_a` ottenuta con due metodi, dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels sono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.
 
 <p align="center"><img src="img/ProteinA_Point6351.png" width=700px></p>
 <p align="center"><img src="img/ProteinA_Point6351_processed.png" width=700px></p>
