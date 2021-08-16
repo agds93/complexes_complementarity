@@ -23,7 +23,7 @@ Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al c
 
 <p align="center"><img src="img/contact_zone_01.png" width=700px /></p>
 <p align="center"><img src="img/contact_zone_02.png" width=700px /></p>
-<p align="center"><i>Figura 1</i>: testo</p>
+<p align="center"><i>Figura 1</i>: Zona di contatto sulle superfici A (sopra) e B (sotto). I punti rossi sono i più vicini al CoM della relativa zona.</p>
 
 I grafici in Figura 2 rappresentano la media della patch con centro `center_a` ottenuta con due metodi, dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels sono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.
 
@@ -38,8 +38,8 @@ Le stesse cose sono rappresentate nella Figura 3 ma riferite alla patch con cent
 <p align="center"><i>Figura 3</i>: Media originale (in alto) e processata (in basso) di una patch della superficie B.</p>
 
 ## Complementarietà  
-Date due patches dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B) si vuole sapere quanto sono complementari.  
-Per farlo le due patches devono essere confrontabili, cioè devono avere i versori normali rivolti in direzioni opposte. Le patches sono generate in questo modo dalla funzione `PatchesMethods`, in particolare la patch della prima superficie è rivolta verso l'alto mentre l'altra verso il basso.  
+Date due patches nella zona di contatto (la prima nella superficie A e la seconda nella superficie B) si vuole sapere quanto sono complementari.  
+Per farlo le due patches devono essere confrontabili, cioè devono avere i versori normali rivolti in direzioni opposte. Le patches sono generate in questo modo dalla funzione `PatchesMethods`, in particolare la patch della prima superficie è rivolta verso l'alto mentre l'altra verso il basso. Inoltre non devono avere pixels vuoti.  
 Per stimare la complementarietà delle patches bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch, come quelli della parte bassa della Figura 2-3.  
 Le patches da cui si ricavano i grafici in Figura 2 e Figura 3 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno una buona similarità, infatti il valore della differenza `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è pari a un numero vicino a uno.  
 In Figura 4 e Figura 5 sono visibili i valori, per ogni metodo, di `c_inv_diff` tra dieci punti appartenenti `patch_prot_b` (`patch_prot_a`) e il punto `center_a` (`center_b`).
@@ -109,6 +109,11 @@ surf_b = np.zeros((l_b, 6))
 surf_b[:,:] = surf_b_[["x", "y", "z", "Nx", "Ny", "Nz"]]
 surf_b_obj = SF.Surface(surf_b[:,:], patch_num = 0, r0 = Rs, theta_max = 45)
 ```
+I grafici in Figura 0 sono prodotti da
+```python
+res1, c = SF.ConcatenateFigPlots([surf_a_obj.surface[:,:3],surf_b_obj.surface[:,:3]])
+SF.Plot3DPoints(res1[:,0], res1[:,1], res1[:,2], c, 0.3)
+```
 ### Utilità
 Dato un insieme di punti `points` e un altro punto `P`, la seguente funzione restituisce l'elemento di `points` più vicino a `P`.
 ```python
@@ -152,6 +157,17 @@ center_a_true = PointNearPoint(surf_a[:,:3], patch_prot_a[center_a])
 center_b_true = PointNearPoint(surf_b[:,:3], patch_prot_b[center_b])
 center_a = center_a_true
 center_b = center_b_true
+```
+I grafici in Figura 1 sono prodotti rispettivamente da
+```python
+cm = patch_prot_a[center_a]
+res1, c = SF.ConcatenateFigPlots([patch_prot_a,np.row_stack([cm,cm])])
+SF.Plot3DPoints(res1[:,0], res1[:,1], res1[:,2], c, 0.3)
+```
+```python
+cm = patch_prot_b[center_b]
+res1, c = SF.ConcatenateFigPlots([patch_prot_b,np.row_stack([cm,cm])])
+SF.Plot3DPoints(res1[:,0], res1[:,1], res1[:,2], c, 0.3)
 ```
 ### Creazione delle patch
 La seguente funzione genera le medie di due patch (una per superficie) con orientazioni opposte per ogni metodo.
