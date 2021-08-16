@@ -39,8 +39,12 @@ Le stesse cose sono rappresentate nella Figura 3 ma riferite alla patch con cent
 
 ## Complementarietà  
 Date due patches nella zona di contatto (la prima nella superficie A e la seconda nella superficie B) si vuole sapere quanto sono complementari.  
-Per tale scopo le patches devono essere confrontabili, cioè devono avere i versori normali rivolti in direzioni opposte, e non devono avere pixels vuoti. Le patches sono generate in questo modo dalla funzione `PatchesMethods`, dove la patch della prima superficie è rivolta verso l'alto mentre l'altra verso il basso.  
-Per stimare la complementarietà delle patches bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch, come quelli della parte bassa della Figura 2-3.  
+Per tale scopo le patches devono:
+* avere i versori normali rivolti in direzioni opposte, così da essere confrontabili.
+* non devono avere pixels vuoti (o isole) all'interno del cerchio unitario in cui è definito il formalismo di Zernike.
+
+La prima condizione è soddisfatta se si generano le medie tramite la funzione `PatchesMethods`, dove la patch della prima superficie è rivolta verso l'alto mentre l'altra verso il basso. Invece la seconda condizione è rispettata se si utilizzano per il calcolo dei coefficienti di Zernike la versione processata della media originale, cioè con i pixel incrementati e senza isole, fornita dalla funzione `ZernikeCoeff` insieme ai coefficienti e ai loro moduli. L'idea è di riempire i pixels vuoti con la media dei pixels vicini.  
+La complementarietà delle patches si stima calcolando, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch, come quelli della parte bassa della Figura 2-3.  
 Le patches da cui si ricavano i grafici in Figura 2 e Figura 3 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno una buona similarità, infatti il valore della differenza `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è pari a un numero vicino a uno.  
 In Figura 4 e Figura 5 sono visibili i valori, per ogni metodo, di `c_inv_diff` tra dieci punti appartenenti `patch_prot_b` (`patch_prot_a`) e il punto `center_a` (`center_b`).
 
