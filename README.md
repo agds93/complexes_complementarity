@@ -10,39 +10,45 @@ I metodi per selezionare una patch, calcolare media e varianza per ogni pixel in
 
 ## Ricerca della regione di legame
 L'intera superficie del complesso proteico studiato è visibile in Figura 0.
+
 <p align="center"><img src="img/two_proteins_01.png" width=700px /></p>
 <p align="center"><img src="img/two_proteins_02.png" width=700px /></p>
 <p align="center"><i>Figura 0</i>: Proteina A (blu) e proteina B (rosso) da due punti di vista.</p>
 
-Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. Tale funzione restituisce due zone di contatto:
+Per trovare la zona di contatto tra le due superfici si utilizza la funzione `GroupNearPoints` in base alla distanza di soglia `Daa` scelta. Tale funzione restituisce le due parti della zona di contatto:
 * `patch_prot_a`, cioè la zona di contatto sulla superficie A (punti blu in Figura 0).
 * `patch_prot_b`, cioè la zona di contatto sulla superficie B (punti rossi in Figura 0).
 
-Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al centro di massa della zona di contatto, rispettivamente sulla superficie A e sulla superficie B.  
-I grafici in Figura 1 rappresentano la media della patch con centro `center_a` ottenuta con due metodi, dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels sono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.
+Tale funzione fornisce anche gli indici `center_a` e `center_b` più vicini al centro di massa della zona di contatto, rispettivamente sulla superficie A e sulla superficie B. Tali punti insieme alle due parti della zona di contatto sono visibili in Figura 1.
+
+<p align="center"><img src="img/contact_zone_01.png" width=700px /></p>
+<p align="center"><img src="img/contact_zone_02.png" width=700px /></p>
+<p align="center"><i>Figura 1</i>: testo</p>
+
+I grafici in Figura 2 rappresentano la media della patch con centro `center_a` ottenuta con due metodi, dove, nei grafici in alto, è presente la media originale. Nella stessa figura, ma nei grafici in basso, è presente la media processata della patch, in cui i pixels sono incrementati e riempiti per rimuovere le aree vuote presenti nella media originale.
 
 <p align="center"><img src="img/ProteinA_Point6351.png" width=700px></p>
 <p align="center"><img src="img/ProteinA_Point6351_processed.png" width=700px></p>
-<p align="center"><i>Figura 1</i>: Media originale (in alto) e processata (in basso) di una patch della superficie A.</p>
+<p align="center"><i>Figura 2</i>: Media originale (in alto) e processata (in basso) di una patch della superficie A.</p>
 
-Le stesse cose sono rappresentate nella Figura 2 ma riferite alla patch con centro `center_b`.
+Le stesse cose sono rappresentate nella Figura 3 ma riferite alla patch con centro `center_b`.
 
 <p align="center"><img src="img/ProteinB_Point6026.png" width=700px></p>
 <p align="center"><img src="img/ProteinB_Point6026_processed.png" width=700px></p>
-<p align="center"><i>Figura 2</i>: Media originale (in alto) e processata (in basso) di una patch della superficie B.</p>
+<p align="center"><i>Figura 3</i>: Media originale (in alto) e processata (in basso) di una patch della superficie B.</p>
 
 ## Complementarietà  
 Date due patches dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B) si vuole sapere quanto sono complementari.  
 Per farlo le due patches devono essere confrontabili, cioè devono avere i versori normali rivolti in direzioni opposte. Le patches sono generate in questo modo dalla funzione `PatchesMethods`, in particolare la patch della prima superficie è rivolta verso l'alto mentre l'altra verso il basso.  
-Per stimare la complementarietà delle patches bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch, come quelli della parte bassa della Figura 1-2.  
-Le patches da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno una buona similarità, infatti il valore della differenza `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è pari a un numero vicino a uno.  
-In Figura 3 e Figura 4 sono visibili i valori, per ogni metodo, di `c_inv_diff` tra dieci punti appartenenti `patch_prot_b` (`patch_prot_a`) e il punto `center_a` (`center_b`).
+Per stimare la complementarietà delle patches bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch, come quelli della parte bassa della Figura 2-3.  
+Le patches da cui si ricavano i grafici in Figura 2 e Figura 3 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno una buona similarità, infatti il valore della differenza `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è pari a un numero vicino a uno.  
+In Figura 4 e Figura 5 sono visibili i valori, per ogni metodo, di `c_inv_diff` tra dieci punti appartenenti `patch_prot_b` (`patch_prot_a`) e il punto `center_a` (`center_b`).
 
 <p align="center"><img src="img/diff_coeff_pointA_zoneB.png" width=700px></p>
-<p align="center"><i>Figura 3</i>: Differenza degli invarianti tra dieci punti della zona B e il punto più vicino al CoM della zona A.</p>
+<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra dieci punti della zona B e il punto più vicino al CoM della zona A.</p>
 
 <p align="center"><img src="img/diff_coeff_pointB_zoneA.png" width=700px></p>
-<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra dieci punti della zona A e il punto più vicino al CoM della zona B.</p>
+<p align="center"><i>Figura 5</i>: Differenza degli invarianti tra dieci punti della zona A e il punto più vicino al CoM della zona B.</p>
 
 ## Appendice
 ### Librerie e moduli
@@ -238,7 +244,7 @@ with open("coeff_dist_B.txt", "w") as file2 :
 ```
 Il file generato è disponibile <a href="data/coeff_dist_B.txt" target="_blank">qui</a>.
 ### Grafici
-La seguente funzione grafica la media di una patch prodotta con due diversi metodi: `CreatePlane_Weigths` e `CreatePlane_Projections`. Tale funzione produce i grafici in Figura 1-2. Gli input sono:
+La seguente funzione grafica la media di una patch prodotta con due diversi metodi: `CreatePlane_Weigths` e `CreatePlane_Projections`. Tale funzione produce i grafici in Figura 2-3. Gli input sono:
 * il nome della proteina da inserire nel titolo.
 * il numero di pixel `Npixel`. 
 * il raggio `Rs` della sfera che include la patch.
@@ -288,7 +294,7 @@ def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, colo
         mpl.savefig("{}".format(n))
         print("The figure was generated.")
 ```
-La Figura 3 è prodotta da
+La Figura 4 è prodotta da
 ```python
 points_list = np.loadtxt("./risultati/coeff_dist_A.txt", usecols=1, unpack=True)
 coeff_W = np.loadtxt("./risultati/coeff_dist_A.txt", usecols=2, unpack=True)
@@ -309,7 +315,7 @@ ax.legend(fontsize="7")
 fig.tight_layout()
 mpl.savefig("diff_coeff_pointA_zoneB.pdf")
 ```
-La Figura 4 è prodotta da
+La Figura 5 è prodotta da
 ```python
 points_list = np.loadtxt("./risultati/coeff_dist_B.txt", usecols=0, unpack=True)
 coeff_W = np.loadtxt("./risultati/coeff_dist_B.txt", usecols=2, unpack=True)
