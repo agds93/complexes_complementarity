@@ -32,15 +32,15 @@ Le stesse cose sono rappresentate nella Figura 2 ma riferite alla patch con cent
 <p align="center"><i>Figura 2</i>: Media originale (in alto) e processata (in basso) di una patch della superficie B.</p>
 
 ## Complementarietà  
-Date due patch dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B), per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch. Tali piani processati sono i grafici nella parte bassa della Figura 1-2.  
+Date due patch dentro la zona di contatto (la prima nella superficie A e la seconda nella superficie B), per sapere quanto sono complementari bisogna calcolare, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch, come quelli della parte bassa della Figura 1-2.  
 Le patch da cui si ricavano i grafici in Figura 1 e Figura 2 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno una buona similarità, infatti il valore della differenza `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è pari a un numero vicino a uno.  
 In Figura 3 e Figura 4 sono visibili i valori, per ogni metodo, di `c_inv_diff` tra dieci punti appartenenti `patch_prot_b` (`patch_prot_a`) e il punto `center_a` (`center_b`).
 
 <p align="center"><img src="img/diff_coeff_pointA_zoneB.png" width=700px></p>
-<p align="center"><i>Figura 3</i>: Differenza degli invarianti tra dieci punti della zona B e il punto migliore della zona A.</p>
+<p align="center"><i>Figura 3</i>: Differenza degli invarianti tra dieci punti della zona B e il punto più vicino al CoM della zona A.</p>
 
 <p align="center"><img src="img/diff_coeff_pointB_zoneA.png" width=700px></p>
-<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra dieci punti della zona A e il punto migliore della zona B.</p>
+<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra dieci punti della zona A e il punto più vicino al CoM della zona B.</p>
 
 ## Appendice
 ### Librerie e moduli
