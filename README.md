@@ -44,12 +44,11 @@ Per tale scopo le patches devono:
 * non devono avere pixels vuoti (o isole) all'interno del cerchio unitario in cui è definito il formalismo di Zernike.
 
 La prima condizione è soddisfatta se si generano le medie tramite la funzione `PatchesMethods`, dove la patch della prima superficie è rivolta verso l'alto mentre l'altra verso il basso. Invece la seconda condizione è rispettata se si utilizzano per il calcolo dei coefficienti di Zernike la versione processata della media originale, cioè con i pixel incrementati e senza isole, come quelli della parte bassa della Figura 2-3, fornita dalla funzione `ZernikeCoeff` insieme ai coefficienti e ai loro moduli. L'idea è di riempire i pixels vuoti con la media dei pixels vicini.  
-La complementarietà delle patches si stima calcolando, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch.  
-Le patches da cui si ricavano i grafici in Figura 2 e Figura 3 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno una buona similarità, infatti il valore della differenza `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è pari a un numero vicino a uno.  
+La complementarietà delle patches si stima tramite `ZernikeCoeff_Distance` in particolare dalla differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch. Le patches da cui si ricavano i grafici in Figura 2 e Figura 3 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno una buona similarità, infatti il valore della differenza `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è pari a un numero vicino a uno.  
 In Figura 4 è visibile la differenza degli invarianti `c_inv_diff` tra il metodo Weights e il metodo Projections per cento punti scelti casualmente su `patch_prot_a` e `patch_prot_b` in funzione della differenza di percentuale di non funzionalità tra i due metodi.
 
 <p align="center"><img src="img/inv_vs_perc.png" width=800px></p>
-<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra i due metodi tra cento di punti su ogni zona di contatto.</p>
+<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra i due metodi per cento punti su ogni zona di contatto in funzione della differenza di percentuale.</p>
 
 ## Appendice
 ### Librerie e moduli
@@ -66,7 +65,7 @@ import pandas as pd
 ```python
 from mayavi import mlab
 ```
-Il modulo `mayavi`, in particolare `mlab`, è necessario per visualizzare le superfici 3D in una finestra Qt.  
+Il modulo `mayavi`, in particolare `mlab`, è necessario per visualizzare le superfici 3D in una finestra Qt, così da produrre la Figura 0-1.  
 Mentre le librerie di base sono
 ```python
 sys.path.append("./bin/")
