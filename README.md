@@ -212,21 +212,25 @@ def ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_1, surf_b_obj, plane_2) :
     return c_inv_diff
 ```
 ### Complementarietà
-La differenza dei moduli dei coefficienti di Zernike rispetto al punto più vicino al centro di massa di ogni zona di contatto, per ogni metodo, è data da 
+La differenza tra i due metodi dei moduli dei coefficienti di Zernike per il punto più vicino al centro di massa (CoM) di ogni zona di contatto, con la relativa differenza di percentuale di non funzionalità, è data da 
 ```python
 center_1 = center_a
 center_2 = center_b
-
-plane_W_1, plane_P_1, plane_W_2, plane_P_2 = PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
-coeff_diff_W = ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_b_obj, plane_W_2)
-coeff_diff_P = ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_P_1, surf_b_obj, plane_P_2)
-
+plane_W_1, plane_P_1, plane_W_2, plane_P_2 = MU.PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
+coeff_diff_a = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_a_obj, plane_P_1)
+coeff_diff_b = MU.ZernikeCoeff_Distance(ZOrder, surf_b_obj, plane_W_2, surf_b_obj, plane_P_2)
+_, perc_W_a = MU.PercHigherVariance_Weights("var", Npixel, surf_a_obj, center_1, Dpp, threshold)
+_, perc_P_a = MU.PercHigherVariance_Projections("var", Npixel, surf_a_obj, center_1, Dpp, threshold)
+_, perc_W_b = MU.PercHigherVariance_Weights("var", Npixel, surf_b_obj, center_2, Dpp, threshold)
+_, perc_P_b = MU.PercHigherVariance_Projections("var", Npixel, surf_b_obj, center_2, Dpp, threshold)
+perc_a = np.absolute( perc_W_a - perc_P_a )
+perc_b = np.absolute( perc_W_b - perc_P_b )
 print("Protein A: Patch center = {}".format(center_1))
 print("Protein B: Patch center = {}".format(center_2))
-print("Weigths Method: Difference Zernike coefficients = {}".format(coeff_diff_W))
-print("Projections Method: Difference Zernike coefficients = {}".format(coeff_diff_P))
+print("Patch A: Difference Zernike coefficients = {},  perc_a = {}".format(coeff_diff_a,perc_a))
+print("Patch B: Difference Zernike coefficients = {},  perc_b = {}".format(coeff_diff_b,perc_b))
 ```
-La differenza degli invarianti tra i due metodi per cento punti della zona A e della zona B è data da
+La differenza degli invarianti e della percentuale tra i due metodi per cento punti della zona A e della zona B è data da
 ```python
 with open("inv_vs_perc.txt", "w") as last_file :
     for i in range(100) :
