@@ -43,16 +43,13 @@ Per tale scopo le patches devono:
 * avere i versori normali rivolti in direzioni opposte, così da essere confrontabili.
 * non devono avere pixels vuoti (o isole) all'interno del cerchio unitario in cui è definito il formalismo di Zernike.
 
-La prima condizione è soddisfatta se si generano le medie tramite la funzione `PatchesMethods`, dove la patch della prima superficie è rivolta verso l'alto mentre l'altra verso il basso. Invece la seconda condizione è rispettata se si utilizzano per il calcolo dei coefficienti di Zernike la versione processata della media originale, cioè con i pixel incrementati e senza isole, fornita dalla funzione `ZernikeCoeff` insieme ai coefficienti e ai loro moduli. L'idea è di riempire i pixels vuoti con la media dei pixels vicini.  
-La complementarietà delle patches si stima calcolando, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch, come quelli della parte bassa della Figura 2-3.  
+La prima condizione è soddisfatta se si generano le medie tramite la funzione `PatchesMethods`, dove la patch della prima superficie è rivolta verso l'alto mentre l'altra verso il basso. Invece la seconda condizione è rispettata se si utilizzano per il calcolo dei coefficienti di Zernike la versione processata della media originale, cioè con i pixel incrementati e senza isole, come quelli della parte bassa della Figura 2-3, fornita dalla funzione `ZernikeCoeff` insieme ai coefficienti e ai loro moduli. L'idea è di riempire i pixels vuoti con la media dei pixels vicini.  
+La complementarietà delle patches si stima calcolando, tramite `ZernikeCoeff_Distance`, la differenza `c_inv_diff` dei moduli dei coefficienti dell'espansione di Zernike tra i rispettivi piani processati delle due patch.  
 Le patches da cui si ricavano i grafici in Figura 2 e Figura 3 hanno come centro rispettivamente `center_a` e `center_b`, cioè il punto più vicino al centro di massa di tale zona. Di conseguenza tali patch hanno una buona similarità, infatti il valore della differenza `c_inv_diff` tra le due rispettive liste di coefficienti di Zernike è pari a un numero vicino a uno.  
-In Figura 4 e Figura 5 sono visibili i valori, per ogni metodo, di `c_inv_diff` tra dieci punti appartenenti `patch_prot_b` (`patch_prot_a`) e il punto `center_a` (`center_b`).
+In Figura 4 è visibile la differenza degli invarianti `c_inv_diff` tra il metodo Weights e il metodo Projections per cento punti scelti casualmente su `patch_prot_a` e `patch_prot_b` in funzione della differenza di percentuale di non funzionalità tra i due metodi.
 
-<p align="center"><img src="img/diff_coeff_pointA_zoneB.png" width=700px></p>
-<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra dieci punti della zona B e il punto più vicino al CoM della zona A.</p>
-
-<p align="center"><img src="img/diff_coeff_pointB_zoneA.png" width=700px></p>
-<p align="center"><i>Figura 5</i>: Differenza degli invarianti tra dieci punti della zona A e il punto più vicino al CoM della zona B.</p>
+<p align="center"><img src="img/inv_vs_perc.png" width=800px></p>
+<p align="center"><i>Figura 4</i>: Differenza degli invarianti tra i due metodi tra cento di punti su ogni zona di contatto.</p>
 
 ## Appendice
 ### Librerie e moduli
@@ -230,47 +227,24 @@ print("Protein B: Patch center = {}".format(center_2))
 print("Weigths Method: Difference Zernike coefficients = {}".format(coeff_diff_W))
 print("Projections Method: Difference Zernike coefficients = {}".format(coeff_diff_P))
 ```
-Si generano dieci indici di punti intorno a `center_a` e `center_b`, cioè
+La differenza degli invarianti tra i due metodi per cento punti della zona A e della zona B è data da
 ```python
-center_list = np.arange(5500, 6500, 100)
+with open("inv_vs_perc.txt", "w") as last_file :
+    for i in range(100) :
+        center_1 = np.random.randint(5000,7000)
+        center_2 = np.random.randint(5000,7000)
+        plane_W_a, plane_P_a, plane_W_b, plane_P_b = MU.PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
+        coeff_diff_a = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_a, surf_a_obj, plane_P_a)
+        coeff_diff_b = MU.ZernikeCoeff_Distance(ZOrder, surf_b_obj, plane_W_b, surf_b_obj, plane_P_b)
+        _, perc_W_a = MU.PercHigherVariance_Weights("var", Npixel, surf_a_obj, center_1, Dpp, threshold)
+        _, perc_P_a = MU.PercHigherVariance_Projections("var", Npixel, surf_a_obj, center_1, Dpp, threshold)
+        _, perc_W_b = MU.PercHigherVariance_Weights("var", Npixel, surf_b_obj, center_2, Dpp, threshold)
+        _, perc_P_b = MU.PercHigherVariance_Projections("var", Npixel, surf_b_obj, center_2, Dpp, threshold)
+        perc_a = np.absolute( perc_W_a - perc_P_a )
+        perc_b = np.absolute( perc_W_b - perc_P_b )
+        last_file.write("{}\t{}\t{}\t{}\t{}\t{}\n".format(center_1, center_2, coeff_diff_a, coeff_diff_b, perc_a, perc_b))
 ```
-Gli indici sono gli stessi per entrambe le zone, però si riferiscono a punti diversi.  
-La differenza degli invarianti tra i punti nella zona B e il punto `center_a` della zona A è data da
-```python
-center_1 = center_a  # only this is fixed
-center_2 = center_b
-plane_W_1, plane_P_1, _, _ = PatchesMethods(Npixel, surf_a_obj, center_a, surf_b_obj, center_b, Dpp)
-coeff_diff_W = np.zeros((len(center_list)))
-coeff_diff_P = np.zeros((len(center_list)))
-for i in range(len(center_list)) :
-    center_2 = center_list[i]
-    _, _, plane_W_2, plane_P_2 = PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
-    coeff_diff_W[i] = ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_b_obj, plane_W_2)
-    coeff_diff_P[i] = ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_P_1, surf_b_obj, plane_P_2)
-
-with open("coeff_dist_A.txt", "w") as file1 :
-    for i in range(len(center_list)) :
-        file1.write("{}\t{}\t{}\t{}\n".format(center_1, center_list[i], coeff_diff_W[i], coeff_diff_P[i]))
-```
-Il file generato è disponibile <a href="data/coeff_dist_A.txt" target="_blank">qui</a>.  
-La differenza degli invarianti tra i punti nella zona A e il punto `center_b` della zona B è data da
-```python
-center_1 = center_a
-center_2 = center_b  # only this is fixed
-_, _, plane_W_2, plane_P_2 = MU.PatchesMethods(Npixel, surf_a_obj, center_a, surf_b_obj, center_b, Dpp)
-coeff_diff_W = np.zeros((len(center_list)))
-coeff_diff_P = np.zeros((len(center_list)))
-for i in range(len(center_list)) :
-    center_1 = center_list[i]
-    plane_W_1, plane_P_1, _, _, = MU.PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
-    coeff_diff_W[i] = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_b_obj, plane_W_2)
-    coeff_diff_P[i] = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_P_1, surf_b_obj, plane_P_2)
-    
-with open("coeff_dist_B.txt", "w") as file2 :
-    for i in range(len(center_list)) :
-        file2.write("{}\t{}\t{}\t{}\n".format(center_list[i], center_2, coeff_diff_W[i], coeff_diff_P[i]))
-```
-Il file generato è disponibile <a href="data/coeff_dist_B.txt" target="_blank">qui</a>.
+Il file generato è disponibile <a href="data/inv_vs_perc.txt" target="_blank">qui</a>.
 ### Grafici
 La seguente funzione grafica la media di una patch prodotta con due diversi metodi: `CreatePlane_Weigths` e `CreatePlane_Projections`. Tale funzione produce i grafici in Figura 2-3. Gli input sono:
 * il nome della proteina da inserire nel titolo.
@@ -324,12 +298,13 @@ def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, colo
 ```
 La Figura 4 è prodotta da
 ```python
-points_list = np.loadtxt("./risultati/coeff_dist_A.txt", usecols=1, unpack=True)
-coeff_W = np.loadtxt("./risultati/coeff_dist_A.txt", usecols=2, unpack=True)
-coeff_P = np.loadtxt("./risultati/coeff_dist_A.txt", usecols=3, unpack=True)
+coeff_a = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=2, unpack=True)
+coeff_b = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=3, unpack=True)
+perc_a = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=4, unpack=True)
+perc_b = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=5, unpack=True)
 
 fig, ax = mpl.subplots(nrows=1, ncols=1, figsize=(8,4), facecolor="white", dpi=200)
-ax.set_xlabel("Surface point", fontsize="8")
+ax.set_xlabel("Difference of percentage", fontsize="8")
 ax.set_ylabel("Difference of invariants", fontsize="8")
 ax.tick_params(axis="both", width ="0.60", color="black", labelsize="6")
 ax.locator_params(axis="x", nbins=21)
@@ -337,30 +312,9 @@ ax.locator_params(axis="y", nbins=21)
 for side in ax.spines.keys():  # 'top', 'bottom', 'left', 'right'
     ax.spines[side].set_linewidth(0.60)
     ax.spines[side].set_color("black")
-ax.plot(points_list, coeff_W, "o", markersize="2", label="Weigths Method", rasterized=True)
-ax.plot(points_list, coeff_P, "o", markersize="2", label="Projections Method", rasterized=True)
+ax.plot(perc_a, coeff_a, "o", markersize="1", label="Zone A", color="blue", rasterized=True)
+ax.plot(perc_b, coeff_b, "o", markersize="1", label="Zone B", color="red", rasterized=True)
 ax.legend(fontsize="7")
 fig.tight_layout()
-mpl.savefig("diff_coeff_pointA_zoneB.pdf")
-```
-La Figura 5 è prodotta da
-```python
-points_list = np.loadtxt("./risultati/coeff_dist_B.txt", usecols=0, unpack=True)
-coeff_W = np.loadtxt("./risultati/coeff_dist_B.txt", usecols=2, unpack=True)
-coeff_P = np.loadtxt("./risultati/coeff_dist_B.txt", usecols=3, unpack=True)
-
-fig, ax = mpl.subplots(nrows=1, ncols=1, figsize=(8,4), facecolor="white", dpi=200)
-ax.set_xlabel("Surface point", fontsize="8")
-ax.set_ylabel("Difference of invariants", fontsize="8")
-ax.tick_params(axis="both", width ="0.60", color="black", labelsize="6")
-ax.locator_params(axis="x", nbins=21)
-ax.locator_params(axis="y", nbins=21)
-for side in ax.spines.keys():  # 'top', 'bottom', 'left', 'right'
-    ax.spines[side].set_linewidth(0.60)
-    ax.spines[side].set_color("black")
-ax.plot(points_list, coeff_W, "o", markersize="2", label="Weigths Method", rasterized=True)
-ax.plot(points_list, coeff_P, "o", markersize="2", label="Projections Method", rasterized=True)
-ax.legend(fontsize="7")
-fig.tight_layout()
-mpl.savefig("diff_coeff_pointB_zoneA.pdf")
+mpl.savefig("inv_vs_perc.png")
 ```
