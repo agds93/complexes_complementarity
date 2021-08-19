@@ -41,5 +41,5 @@ For this purpose:
 * Patches must not have empty pixels (or islands) within the unit circle where the Zernike formalism is defined.
 
 The first condition is satisfied if averages are generated via the `PatchesMethods` function, where the first surface patch is facing up and the other down.  
-Instead, the second condition is met if the processed version of the original mean is used for the calculation of the Zernike coefficients.
+Instead, the second condition is met if the matrix of the mean returned by the function `ZernikeCoeff` is used. This new matrix has
 
