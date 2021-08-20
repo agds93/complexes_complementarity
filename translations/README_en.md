@@ -22,17 +22,17 @@ This function also provides the `center_a` and `center_b` indices closest to the
 <p align="center"><img src="https://github.com/agds93/complexes_complementarity/blob/main/img/contact_zone_02.png" width=600px /></p>
 <p align="center"><i>Figure 1</i>: Contact area on surfaces A (above) and B (below). The red points are the closest ones to the CoM of the relative area.</p>
 
-The Figure 2 represents the mean of the patch with center `center_a` obtained by the *Weights* method (left) and the *Projections* method (right). In the top row of  the figure there are the two original means created in the same way explained in the study of the percentage of non-functionality. Instead, in the bottom row of the figure, there are the relative processed mean of the patch, in which number of pixels is increased and every empty pixel of original mean is filled with the average value of the neighboring pixels. This new mean returned by the function `ZernikeCoeff`.
+The Figure 2 represents the mean of the patch with center `center_a` obtained by the *Weights* method (left) and the *Projections* method (right). In the top row of  the figure there are the two original means created in the same way explained in the study of the percentage of non-functionality. Instead, in the bottom row of the figure, there are the relative processed means of the patch, in which number of pixels is increased and every empty pixel of original mean is filled with the average value of the neighboring pixels. This new mean returned by the function `ZernikeCoeff`.
 
 <p align="center"><img src="https://github.com/agds93/complexes_complementarity/blob/main/img/ProteinA_Point6351.png" width=700px></p>
 <p align="center"><img src="https://github.com/agds93/complexes_complementarity/blob/main/img/ProteinA_Point6351_processed.png" width=700px></p>
-<p align="center"><i>Figure 2</i>: Original (top) and processed (bottom) mean of a patch of surface A with the two methods. Its center is point 6351.</p>
+<p align="center"><i>Figure 2</i>: Original (top) and processed (bottom) mean of a patch of surface A with the two methods. Its center is the point 6351.</p>
 
 The same things are represented in Figure 3 but referring to the patch with center `center_b`.
 
 <p align="center"><img src="https://github.com/agds93/complexes_complementarity/blob/main/img/ProteinB_Point6026.png" width=700px></p>
 <p align="center"><img src="https://github.com/agds93/complexes_complementarity/blob/main/img/ProteinB_Point6026_processed.png" width=700px></p>
-<p align="center"><i>Figure 3</i>: Original (top) and processed (bottom) mean of a patch of surface B with the two methods. Its center is point 6026.</p>
+<p align="center"><i>Figure 3</i>: Original (top) and processed (bottom) mean of a patch of surface B with the two methods. Its center is the point 6026.</p>
 
 ## Complementarity
 Given two patches in the contact zone (the first in the surface A and the second in the surface B) to know how similar one is to the other there are two conditions:
@@ -40,4 +40,11 @@ Given two patches in the contact zone (the first in the surface A and the second
 * Patches must not have empty pixels (or islands) within the unit circle where the Zernike formalism is defined.
 
 The first condition is satisfied if the matrix of original means (top row of Figure 2-3) are generated via the `PatchesMethods` function, where the first surface patch is facing up and the other is facing down. Instead, the second condition is met if the matrix of the processed mean (bottom row of Figure 2-3) returned by the function `ZernikeCoeff` is used.    
-Hence the complementarity of two patches is estimated through `ZernikeCoeff_Distance` in particular by the difference` c_inv_diff` of the coefficient modules of the Zernike expansion between the respective processed plans of patches. 
+Hence the complementarity of two patches is estimated through `ZernikeCoeff_Distance` in particular by the difference `c_inv_diff` of the coefficient modules of the Zernike expansion between the two processed plans of patches. As is visible in Figure 2 and Figure 3, the two patches have a good similarity in fact the value of `c_inv_diff` is approximately equal to one.  
+In Figure 4 are the visible values of `c_inv_diff` for one hundred points chosen randomly on `patch_prot_a` and `patch_prot_b` as a function of the difference in percentage of non-functionality between the two methods. 
+
+<p align="center"><img src="https://github.com/agds93/complexes_complementarity/blob/main/img/inv_vs_perc.png" width=800px></p>
+<p align="center"><i>Figure 4</i>: Difference of the invariants between the two methods for one hundred random points on each contact zone as a function of the relative difference of percentage of non-functionality.</p>
+
+## Appendix
+### Libraries and modules
