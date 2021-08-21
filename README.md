@@ -80,7 +80,7 @@ Daa = 3        # threshold distance to find contact points between surfaces
 ```
 Values are in ångström, except `Npixel` and` ZOrder`.
 ### Load surfaces
-To load the surface points of Protein A (available <a href="https://github.com/agds93/complexes_complementarity/blob/main/data/3B0F_A_min.dms" target="_blank">here</a>) and initialize the `Surface` class object is used
+To load the surface points of Protein A (available <a href="https://github.com/agds93/complexes_complementarity/blob/main/data/3B0F_A_min.dms" target="_blank">here</a>) and initialize the `Surface` class object
 ```python
 surf_name_a = "./data/3B0F_A_min.dms"
 surf_a_ = pd.read_csv(surf_name_a)
@@ -90,7 +90,7 @@ surf_a = np.zeros((l_a, 6))
 surf_a[:,:] = surf_a_[["x", "y", "z", "Nx", "Ny", "Nz"]]
 surf_a_obj = SF.Surface(surf_a[:,:], patch_num = 0, r0 = Rs, theta_max = 45)
 ```
-To load the surface points of Protein B (available <a href="https://github.com/agds93/complexes_complementarity/blob/main/data/3B0F_B_min.dms" target="_blank">here</a>) and initialize the `Surface` class object is used
+To load the surface points of Protein B (available <a href="https://github.com/agds93/complexes_complementarity/blob/main/data/3B0F_B_min.dms" target="_blank">here</a>) and initialize the `Surface` class object
 ```python
 surf_name_b = "./data/3B0F_B_min.dms"
 surf_b_ = pd.read_csv(surf_name_b) 
@@ -143,7 +143,7 @@ This function is used with
 ```python
 center_a, patch_prot_a, center_b, patch_prot_b = GroupNearPoints(Daa, surf_a_obj, surf_b_obj)
 ```
-However, the point indices `center_a` and` center_b` from the `GroupNearPoints` function refer to the` patch_prot_a` and `patch_prot_b` contact zones. To obtain the indices with respect to whole surface is used
+However, the point indices `center_a` and` center_b` from the `GroupNearPoints` function refer to the` patch_prot_a` and `patch_prot_b` contact zones. To obtain the indices referring to the entire surface
 ```python
 center_a_true = PointNearPoint(surf_a[:,:3], patch_prot_a[center_a])
 center_b_true = PointNearPoint(surf_b[:,:3], patch_prot_b[center_b])
@@ -162,7 +162,7 @@ res1, c = SF.ConcatenateFigPlots([patch_prot_b,np.row_stack([cm,cm])])
 SF.Plot3DPoints(res1[:,0], res1[:,1], res1[:,2], c, 0.3)
 ```
 ### Creating Patches
-The following function generates the averages of two patches (one per surface) with opposite orientations for each method.
+The following function generates the means of two patches (one per surface) with opposite orientations for each method.
 ```python
 def PatchesMethods(Npixel, surf_a_obj, c_a, surf_b_obj, c_b, Dpp) :
     patch_a, _ = surf_a_obj.BuildPatch(point_pos=c_a, Dmin=Dpp)
@@ -177,7 +177,7 @@ def PatchesMethods(Npixel, surf_a_obj, c_a, surf_b_obj, c_b, Dpp) :
     plane_P_b, _, _, _ = CreatePlane_Projections("mean", patch=rot_patch_b, z_c=z_pb, Np=Npixel)
     return plane_W_a, plane_P_a, plane_W_b, plane_P_b
 ```
-Processed averages are obtained from the original averages via
+Processed means are obtained from the original means via
 ```python
 plane_W_a_proc = surf_a_obj.EnlargePixels( surf_a_obj.FillTheGap_everywhere(plane_=plane_W_a) )
 plane_P_a_proc = surf_a_obj.EnlargePixels( surf_a_obj.FillTheGap_everywhere(plane_=plane_P_a) )
@@ -208,40 +208,37 @@ The difference between the two methods of the modules of the Zernike coefficient
 ```python
 center_1 = center_a
 center_2 = center_b
+print("Protein A: Patch center = {}".format(center_1))
+print("Protein B: Patch center = {}".format(center_2))
 plane_W_1, plane_P_1, plane_W_2, plane_P_2 = MU.PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
-coeff_diff_a = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_a_obj, plane_P_1)
-coeff_diff_b = MU.ZernikeCoeff_Distance(ZOrder, surf_b_obj, plane_W_2, surf_b_obj, plane_P_2)
+coeff_diff_W = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_b_obj, plane_W_2)
+coeff_diff_P = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_P_1, surf_b_obj, plane_P_2)
+print("Weights method: Difference of Zernike invariants = {}".format(coeff_diff_W))
+print("Projections method: Difference of Zernike invariants = {}".format(coeff_diff_P))
 _, perc_W_a = MU.PercHigherVariance_Weights("var", Npixel, surf_a_obj, center_1, Dpp, threshold)
 _, perc_P_a = MU.PercHigherVariance_Projections("var", Npixel, surf_a_obj, center_1, Dpp, threshold)
 _, perc_W_b = MU.PercHigherVariance_Weights("var", Npixel, surf_b_obj, center_2, Dpp, threshold)
 _, perc_P_b = MU.PercHigherVariance_Projections("var", Npixel, surf_b_obj, center_2, Dpp, threshold)
-perc_a = np.absolute( perc_W_a - perc_P_a )
-perc_b = np.absolute( perc_W_b - perc_P_b )
-print("Protein A: Patch center = {}".format(center_1))
-print("Protein B: Patch center = {}".format(center_2))
-print("Patch A: Difference Zernike coefficients = {},  perc_a = {}".format(coeff_diff_a,perc_a))
-print("Patch B: Difference Zernike coefficients = {},  perc_b = {}".format(coeff_diff_b,perc_b))
+print("perc_W_a = {},  perc_P_a = {},  perc_P_a = {},  perc_P_b = {}".format(perc_W_a, perc_P_a, perc_W_b, perc_P_b))
 ```
-The difference of the invariants and of the percentage between the two hundred point methods of zone A and zone B is given by
+The difference of the invariants between the two hundred point of zone A and zone B, together with the relative percentages of non-functionality is given by
 ```python
 with open("inv_vs_perc.txt", "w") as last_file :
     for i in range(100) :
         center_1 = np.random.randint(5000,7000)
         center_2 = np.random.randint(5000,7000)
-        plane_W_a, plane_P_a, plane_W_b, plane_P_b = MU.PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
-        coeff_diff_a = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_a, surf_a_obj, plane_P_a)
-        coeff_diff_b = MU.ZernikeCoeff_Distance(ZOrder, surf_b_obj, plane_W_b, surf_b_obj, plane_P_b)
+        plane_W_1, plane_P_1, plane_W_2, plane_P_2 = MU.PatchesMethods(Npixel, surf_a_obj, center_1, surf_b_obj, center_2, Dpp)
+        coeff_diff_W = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_W_1, surf_b_obj, plane_W_2)
+        coeff_diff_P = MU.ZernikeCoeff_Distance(ZOrder, surf_a_obj, plane_P_1, surf_b_obj, plane_P_2)
         _, perc_W_a = MU.PercHigherVariance_Weights("var", Npixel, surf_a_obj, center_1, Dpp, threshold)
         _, perc_P_a = MU.PercHigherVariance_Projections("var", Npixel, surf_a_obj, center_1, Dpp, threshold)
         _, perc_W_b = MU.PercHigherVariance_Weights("var", Npixel, surf_b_obj, center_2, Dpp, threshold)
         _, perc_P_b = MU.PercHigherVariance_Projections("var", Npixel, surf_b_obj, center_2, Dpp, threshold)
-        perc_a = np.absolute( perc_W_a - perc_P_a )
-        perc_b = np.absolute( perc_W_b - perc_P_b )
-        last_file.write("{}\t{}\t{}\t{}\t{}\t{}\n".format(center_1, center_2, coeff_diff_a, coeff_diff_b, perc_a, perc_b))
+        last_file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(center_1, center_2, coeff_diff_W, coeff_diff_P, perc_W_a, perc_P_a, perc_W_b, perc_P_b))
 ```
 The generated file is available <a href="https://github.com/agds93/complexes_complementarity/blob/main/data/inv_vs_perc.txt" target="_blank">here</a>.
 ### Charts
-The following graphical function averages a patch produced with two different methods: `CreatePlane_Weigths` and` CreatePlane_Projections`. This function produces the graphs in Figure 2-3. The inputs are:
+the following function produces a graph of the mean of a patch with two different methods: `CreatePlane_Weigths` and` CreatePlane_Projections`. This function produces the graphs in Figure 2-3. The inputs are:
 * the name of the protein to be included in the title.
 * the number of `Npixel` pixels. 
 * the radius `Rs` of the sphere that includes the patch.
@@ -250,7 +247,7 @@ The following graphical function averages a patch produced with two different me
 * the `center` index chosen as the center of the patch.
 * the distance between the points of the `Dpp` patch.
 * the `Daa` value of the threshold distance.
-* the color maps to use.
+* the <a href="https://matplotlib.org/stable/tutorials/colors/colormaps.html" target="_blank">color maps</a> to use.
 * the name of the output file with the appropriate extension.
 
 ```python
@@ -294,10 +291,14 @@ def PlotPatchesComparison(obj_name, Npixel, Rs, p_W, p_P, center, Dpp, Daa, colo
 ```
 Figure 4 is produced by
 ```python
-coeff_a = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=2, unpack=True)
-coeff_b = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=3, unpack=True)
-perc_a = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=4, unpack=True)
-perc_b = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=5, unpack=True)
+coeff_W = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=2, unpack=True)
+coeff_P = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=3, unpack=True)
+perc_W_a = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=4, unpack=True)
+perc_P_a = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=5, unpack=True)
+perc_W_b = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=6, unpack=True)
+perc_P_b = np.loadtxt("./risultati/inv_vs_perc.txt", usecols=7, unpack=True)
+perc_W = np.absolute(perc_W_a-perc_W_b)
+perc_P = np.absolute(perc_P_a-perc_P_b)
 
 fig, ax = mpl.subplots(nrows=1, ncols=1, figsize=(8,4), facecolor="white", dpi=200)
 ax.set_xlabel("Difference of percentage", fontsize="8")
@@ -308,9 +309,7 @@ ax.locator_params(axis="y", nbins=21)
 for side in ax.spines.keys():  # 'top', 'bottom', 'left', 'right'
     ax.spines[side].set_linewidth(0.60)
     ax.spines[side].set_color("black")
-ax.plot(perc_a, coeff_a, "o", markersize="1", label="Zone A", color="blue", rasterized=True)
-ax.plot(perc_b, coeff_b, "o", markersize="1", label="Zone B", color="red", rasterized=True)
-ax.legend(fontsize="7")
+ax.plot(np.absolute(perc_W-perc_P), np.absolute(coeff_W-coeff_P), "o", markersize="1", rasterized=True)
 fig.tight_layout()
-mpl.savefig("inv_vs_perc.png")
+mpl.savefig("inv_vs_perc.pdf")
 ```
